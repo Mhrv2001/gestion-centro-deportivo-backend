@@ -1,0 +1,257 @@
+{
+  "info": {
+    "name": "Centro deportivo - API REST",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Ejecutar en orden con Collection Runner o Newman. Usa solamente datos ficticios propios de la prueba."
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://127.0.0.1:8000"
+    },
+    {
+      "key": "marca",
+      "value": ""
+    },
+    {
+      "key": "profesor_id",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "01 Profesores",
+      "item": [
+        {
+          "name": "01 Crear profesor",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/profesores/",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Profesor Demo{{marca}}\",\n  \"especialidad\": \"Yoga\",\n  \"correo\": \"profe-{{marca}}@example.com\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.collectionVariables.set('marca', Date.now().toString());"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 201', () => pm.response.to.have.status(201));",
+                  "if (pm.response.code === 201) {",
+                  "pm.collectionVariables.set('profesor_id', pm.response.json().id);",
+                  "pm.test('Correo guardado', () => pm.expect(pm.response.json().correo).to.include('@example.com'));",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "02 Buscar profesor",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/api/profesores/?search=Demo{{marca}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+                  "if (pm.response.code === 200) {",
+                  "pm.test('Encuentra el profesor creado', () => pm.expect(pm.response.json().some(p => p.id === Number(pm.collectionVariables.get('profesor_id')))).to.eql(true));",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "03 Consultar profesor",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/api/profesores/{{profesor_id}}/"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+                  "if (pm.response.code === 200) {",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "04 Reemplazar profesor PUT",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/profesores/{{profesor_id}}/",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Profesor Demo{{marca}}\",\n  \"especialidad\": \"Entrenamiento\",\n  \"correo\": \"profe-{{marca}}@example.com\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+                  "if (pm.response.code === 200) {",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "05 Modificar profesor PATCH",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/profesores/{{profesor_id}}/",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"especialidad\": \"Yoga\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+                  "if (pm.response.code === 200) {",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "06 Rechazar correo invalido",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/profesores/",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Profesor Demo{{marca}}\",\n  \"especialidad\": \"Yoga\",\n  \"correo\": \"invalido\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 400', () => pm.response.to.have.status(400));",
+                  "if (pm.response.code === 400) {",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "07 Rechazar correo duplicado",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/profesores/",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Profesor Demo{{marca}}\",\n  \"especialidad\": \"Yoga\",\n  \"correo\": \"PROFE-{{marca}}@example.com\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 400', () => pm.response.to.have.status(400));",
+                  "if (pm.response.code === 400) {",
+                  "}"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
