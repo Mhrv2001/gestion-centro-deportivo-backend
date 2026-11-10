@@ -22,6 +22,33 @@ class DatosEjemploTests(TestCase):
         self.assertEqual(Inscripcion.objects.count(), 0)
 
 
+class ProfesoresAPITests(APITestCase):
+    def test_crud_y_persistencia(self):
+        datos = {"nombre": "Laura", "especialidad": "Yoga", "correo": "LAURA@example.com"}
+        respuesta = self.client.post("/api/profesores/", datos, format="json")
+        self.assertEqual(respuesta.status_code, 201)
+        url = f"/api/profesores/{respuesta.data['id']}/"
+        self.assertEqual(Profesor.objects.get(pk=respuesta.data["id"]).correo, "laura@example.com")
+        self.assertEqual(self.client.get(url).status_code, 200)
+        datos["nombre"] = "Laura Fernández"
+        self.assertEqual(self.client.put(url, datos, format="json").status_code, 200)
+        self.assertEqual(self.client.patch(url, {"especialidad": "Pilates"}, format="json").status_code, 200)
+        self.assertEqual(self.client.get(url).data["especialidad"], "Pilates")
+        self.assertEqual(self.client.delete(url).status_code, 204)
+        self.assertEqual(self.client.get(url).status_code, 404)
+
+    def test_datos_obligatorios_y_correo_invalido(self):
+        for datos in ({}, {"nombre": "Laura", "especialidad": "Yoga", "correo": "invalido"}):
+            with self.subTest(datos=datos):
+                self.assertEqual(self.client.post("/api/profesores/", datos, format="json").status_code, 400)
+        self.assertFalse(Profesor.objects.exists())
+
+    def test_busqueda_de_profesores(self):
+        Profesor.objects.create(nombre="Laura", especialidad="Yoga", correo="laura@example.com")
+        self.assertEqual(len(self.client.get("/api/profesores/?search=Yoga").data), 1)
+        self.assertEqual(self.client.get("/api/profesores/?search=Boxeo").data, [])
+
+
 class InscripcionesAPITests(APITestCase):
     def setUp(self):
         self.profesor = Profesor.objects.create(
