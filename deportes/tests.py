@@ -2,6 +2,7 @@ from django.db import IntegrityError, transaction
 from django.core.management import call_command
 from django.test import TestCase
 from io import StringIO
+from django.forms import modelform_factory
 from rest_framework.test import APITestCase
 
 from .models import Actividad, Inscripcion, Profesor
@@ -79,6 +80,49 @@ class ActividadesAPITests(APITestCase):
         respuesta = self.client.get(f"/api/actividades/?categoria=Bienestar&activa=true&profesor={self.profesor.pk}")
         self.assertEqual(len(respuesta.data), 1)
         self.assertEqual(self.client.get("/api/actividades/?categoria=Equipo&activa=true").data, [])
+
+
+class ValidacionAdminTests(TestCase):
+    def setUp(self):
+        self.profesor = Profesor.objects.create(nombre="Laura", especialidad="Yoga", correo="laura@example.com")
+        self.actividad = Actividad.objects.create(nombre="Yoga", categoria="Bienestar", profesor=self.profesor,
+                                                  horario="Lunes 10:00", capacidad=1, precio=5000)
+        self.formulario = modelform_factory(Inscripcion, fields=["actividad", "nombre_participante", "correo_participante"])
+        self.datos = {"actividad": self.actividad.pk, "nombre_participante": "Ana", "correo_participante": "ANA@example.com"}
+
+    def test_formulario_normaliza_correo_y_rechaza_sin_cupos(self):
+        formulario = self.formulario(data=self.datos)
+        self.assertTrue(formulario.is_valid(), formulario.errors)
+        registro = formulario.save()
+        self.assertEqual(registro.correo_participante, "ana@example.com")
+        otro = self.formulario(data={**self.datos, "correo_participante": "bea@example.com"})
+        self.assertFalse(otro.is_valid())
+        self.assertIn("actividad", otro.errors)
+        editar = self.formulario(data=self.datos, instance=registro)
+        self.assertTrue(editar.is_valid(), editar.errors)
+
+    def test_formulario_rechaza_actividad_inactiva(self):
+        self.actividad.activa = False
+        self.actividad.save()
+        formulario = self.formulario(data=self.datos)
+        self.assertFalse(formulario.is_valid())
+        self.assertIn("actividad", formulario.errors)
+
+    def test_formulario_rechaza_capacidad_menor_que_inscritos(self):
+        self.actividad.capacidad = 2
+        self.actividad.save()
+        for nombre in ("Ana", "Bea"):
+            Inscripcion.objects.create(actividad=self.actividad, nombre_participante=nombre, correo_participante=f"{nombre.lower()}@example.com")
+        clase = modelform_factory(Actividad, fields=["capacidad"])
+        formulario = clase(data={"capacidad": 1}, instance=self.actividad)
+        self.assertFalse(formulario.is_valid())
+        self.assertIn("capacidad", formulario.errors)
+
+    def test_formulario_rechaza_correo_profesor_duplicado(self):
+        clase = modelform_factory(Profesor, fields="__all__")
+        formulario = clase(data={"nombre": "Otra", "especialidad": "Yoga", "correo": "LAURA@example.com"})
+        self.assertFalse(formulario.is_valid())
+        self.assertIn("correo", formulario.errors)
 
 
 class InscripcionesAPITests(APITestCase):
