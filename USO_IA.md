@@ -6,18 +6,18 @@ Esta declaración describe el uso de la herramienta en el proyecto presentado en
 
 ## En qué se utilizó
 
-| Archivos | Apoyo recibido | Nivel aproximado |
+| Archivos | Apoyo recibido | Nivel declarado por el estudiante |
 |---|---|---|
-| `models.py` | Propuesta de modelos, relaciones y validaciones | Alto |
-| `serializers.py` | Código inicial y correcciones de cupos, duplicados y actualizaciones | Alto |
-| `views.py` | CRUD, filtros y transacciones | Alto |
-| `urls.py` y `admin.py` | Rutas y configuración del administrador | Alto |
-| `settings.py` | Ajustes sobre la configuración que genera Django | Menor, limitado a ajustes |
-| `tests.py` | Redacción y ejecución de pruebas | Alto |
-| Carga de ejemplos y herramientas de Postman | Código y solicitudes de prueba | Alto |
-| README y documentación | Redacción y revisión | Alto |
+| `models.py` | Propuesta de modelos, relaciones y validaciones | Medio |
+| `serializers.py` | Código inicial y correcciones de cupos, duplicados y actualizaciones | Medio |
+| `views.py` | CRUD, filtros y transacciones | Medio |
+| `urls.py` y `admin.py` | Rutas y configuración del administrador | Bajo |
+| `settings.py` | Ajustes sobre la configuración que genera Django | Bajo |
+| `tests.py` | Redacción y ejecución de pruebas | Medio |
+| Carga de ejemplos y herramientas de Postman | Código y solicitudes de prueba | Medio |
+| README y documentación | Redacción y revisión | Medio |
 
-Los niveles son estimaciones del apoyo recibido, no porcentajes medidos. Las migraciones las generó Django y la lista de dependencias se obtuvo con pip, siguiendo instrucciones del asistente.
+Los niveles recogen la valoración personal indicada por Matías; no son una medición ni una verificación de la proporción de código generado. La columna de apoyo recibido describe las intervenciones realizadas. Cada integrante debe revisar su propia declaración antes de entregar. Las migraciones las generó Django y la lista de dependencias se obtuvo con pip, siguiendo instrucciones del asistente.
 
 ## Preguntas de la pauta
 
