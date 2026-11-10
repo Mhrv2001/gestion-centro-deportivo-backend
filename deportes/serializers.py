@@ -4,6 +4,15 @@ from .models import Actividad, Inscripcion, Profesor
 
 
 class ProfesorSerializer(serializers.ModelSerializer):
+    def validate_correo(self, correo):
+        correo = correo.strip().lower()
+        profesores = Profesor.objects.filter(correo__iexact=correo)
+        if self.instance:
+            profesores = profesores.exclude(pk=self.instance.pk)
+        if profesores.exists():
+            raise serializers.ValidationError("Este correo ya pertenece a un profesor.")
+        return correo
+
     class Meta:
         model = Profesor
         fields = "__all__"
@@ -62,20 +71,29 @@ class InscripcionSerializer(serializers.ModelSerializer):
         read_only_fields = ["fecha_inscripcion"]
 
     def validate(self, datos):
-        actividad = datos.get("actividad")
-        correo = datos.get("correo_participante", "").lower()
+        actividad = datos.get("actividad", getattr(self.instance, "actividad", None))
+        correo = datos.get(
+            "correo_participante", getattr(self.instance, "correo_participante", "")
+        ).strip().lower()
+        if actividad is None:
+            raise serializers.ValidationError({"actividad": "Selecciona una actividad."})
 
-        if not actividad.activa:
+        misma_actividad = self.instance and self.instance.actividad_id == actividad.pk
+        inscripciones = actividad.inscripciones.all()
+        if self.instance:
+            inscripciones = inscripciones.exclude(pk=self.instance.pk)
+
+        if not misma_actividad and not actividad.activa:
             raise serializers.ValidationError(
                 {"actividad": "La actividad no está disponible."}
             )
 
-        if actividad.inscripciones.count() >= actividad.capacidad:
+        if inscripciones.count() >= actividad.capacidad:
             raise serializers.ValidationError(
                 {"actividad": "No quedan cupos disponibles."}
             )
 
-        if actividad.inscripciones.filter(
+        if inscripciones.filter(
             correo_participante__iexact=correo
         ).exists():
             raise serializers.ValidationError(

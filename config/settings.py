@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.1/ref/settings/
 """
 
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -20,7 +21,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/6.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-o3-s^9j!uzn&y0un2bqi(6mmx+k)31bxzis=5afv=609i%x79$'
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'django-insecure-solo-desarrollo-centro-deportivo')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -78,6 +79,8 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
+        # Serializa las escrituras breves antes de validar cupos en una transacción.
+        'OPTIONS': {'transaction_mode': 'IMMEDIATE', 'timeout': 10},
     }
 }
 
@@ -104,9 +107,9 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/6.1/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'es-cl'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'America/Santiago'
 
 USE_I18N = True
 
