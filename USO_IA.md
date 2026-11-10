@@ -1,50 +1,42 @@
-# Declaración de uso de inteligencia artificial
+# Uso de inteligencia artificial
 
-## Herramienta y alcance
+Para este backend se utilizó ChatGPT/Codex como apoyo para escribir código, resolver errores y entender cómo funciona Django. La herramienta propuso buena parte del código de la API y también hizo modificaciones directamente en el proyecto.
 
-Se utilizó ChatGPT/Codex durante el desarrollo del backend como asistente para proponer código, explicar conceptos, localizar errores, ejecutar verificaciones y redactar documentación. Parte del trabajo se realizó siguiendo instrucciones manualmente y otra parte mediante edición directa del asistente en el computador.
+Esta declaración describe el uso de la herramienta en el proyecto presentado en pareja. Las tareas y aprendizajes individuales deben ser revisados por cada integrante.
 
-## Estimación por archivo
+## En qué se utilizó
 
-Las siguientes cifras describen aproximadamente la proporción de código o texto propuesto con asistencia de IA. Son estimaciones basadas en el desarrollo de este proyecto, no resultados de un detector ni mediciones automáticas. Copiar y ejecutar una propuesta no convierte esa propuesta en código redactado de forma independiente. Los integrantes deben revisar y confirmar esta declaración antes de entregar.
+| Archivos | Apoyo recibido | Nivel aproximado |
+|---|---|---|
+| `models.py` | Propuesta de modelos, relaciones y validaciones | Alto |
+| `serializers.py` | Código inicial y correcciones de cupos, duplicados y actualizaciones | Alto |
+| `views.py` | CRUD, filtros y transacciones | Alto |
+| `urls.py` y `admin.py` | Rutas y configuración del administrador | Alto |
+| `settings.py` | Ajustes sobre la configuración que genera Django | Menor, limitado a ajustes |
+| `tests.py` | Redacción y ejecución de pruebas | Alto |
+| Carga de ejemplos y herramientas de Postman | Código y solicitudes de prueba | Alto |
+| README y documentación | Redacción y revisión | Alto |
 
-| Archivo o grupo | Estimación de contenido propuesto por IA | Descripción |
-|---|---:|---|
-| `deportes/models.py` | 90–100% | Propuesta de modelos, relaciones, validaciones y restricciones |
-| `deportes/serializers.py` | 90–100% | Conversión a JSON, validación y correcciones para actualizaciones parciales |
-| `deportes/views.py` | 90–100% | ViewSets, filtros, transacciones y tratamiento de eliminación protegida |
-| `deportes/urls.py` y `config/urls.py` | 90–100% | Registro y conexión de rutas de la API |
-| `deportes/admin.py` | 90–100% | Registro de modelos y configuración del administrador |
-| `config/settings.py` | 10–20% | Cambios sobre la plantilla generada por Django: apps, SQLite, idioma, zona horaria y configuración local |
-| `deportes/tests.py` | 90–100% | Propuesta e implementación de pruebas automáticas |
-| `deportes/management/commands/cargar_ejemplos.py` | 90–100% | Comando de carga de ejemplos reproducibles |
-| `herramientas/` y colección `postman/` | 90–100% | Generación de solicitudes, comprobaciones y ejecución automatizada |
-| README y documentos de `docs/` | 90–100% | Redacción inicial de instrucciones, referencia y material de estudio |
+Los niveles son estimaciones del apoyo recibido, no porcentajes medidos. Las migraciones las generó Django y la lista de dependencias se obtuvo con pip, siguiendo instrucciones del asistente.
 
-Las migraciones fueron generadas por Django y `requirements.txt` por pip mediante comandos guiados. Los informes de `evidencias/` contienen resultados producidos al ejecutar las herramientas, no resultados inventados por el asistente.
+## Preguntas de la pauta
 
-## Preguntas de reflexión
+**¿En qué aspectos del proyecto se utilizó IA?**
 
-### 1. ¿En qué aspectos se utilizó inteligencia artificial?
+En los modelos, serializers, vistas, rutas, validaciones, pruebas y documentación. También se pidieron explicaciones de las líneas de código y ayuda para resolver errores.
 
-En la planificación de la estructura del backend, el código de la API, validaciones de negocio, resolución de errores, pruebas, ejemplos de uso y documentación. También se solicitaron explicaciones paso a paso para comprender los archivos.
+**¿Qué partes se realizaron manualmente?**
 
-### 2. ¿Qué partes se realizaron principalmente por los estudiantes?
+Las tareas manuales registradas incluyen crear la carpeta y el entorno virtual, instalar dependencias, copiar y ajustar el código siguiendo las indicaciones, ejecutar migraciones, crear el repositorio y realizar las primeras subidas. Más adelante se pidió al asistente completar código y pruebas. Las propuestas de código se consideran asistidas aunque se hayan copiado manualmente.
 
-Matías realizó manualmente la creación de la carpeta y el entorno virtual, instalación de dependencias, ejecución de comandos de Django y migraciones, edición inicial siguiendo las propuestas, creación del repositorio en GitHub y varios commits y subidas. Posteriormente autorizó que el asistente completara partes del código, verificaciones y documentación. No se atribuyen aquí contribuciones de otro integrante que no hayan sido confirmadas.
+**¿Qué errores o problemas aparecieron?**
 
-### 3. ¿Qué errores o problemas se encontraron?
+Hubo archivos sin guardar, imports en el archivo equivocado y rutas sin `urlpatterns`. También hubo un import circular en `serializers.py`. La validación inicial de inscripciones necesitó correcciones para permitir PATCH y para no contar la misma inscripción como duplicada o como un cupo adicional.
 
-Durante la integración aparecieron imports de clases inexistentes por archivos sin guardar, un `urls.py` sin `urlpatterns` y un import circular al importar serializers desde el mismo archivo. La propuesta inicial de validación de inscripciones tampoco manejaba correctamente los datos omitidos en PATCH ni excluía la propia inscripción al contar cupos y duplicados. Esos casos se corrigieron y se cubrieron con pruebas. También se alinearon las validaciones del administrador con las de la API.
+**¿Cómo se comprobó que funcionaba?**
 
-### 4. ¿Cómo se verificó que el código sugerido funcionaba?
+Con `manage.py check`, las migraciones, 25 pruebas de Django y una colección Postman ejecutada con Newman. Esa colección completó 35 solicitudes y 45 comprobaciones sin fallos. Los resultados están guardados en `evidencias`.
 
-Se ejecutó `manage.py check`, se revisó la coherencia entre modelos y migraciones y se probaron solicitudes mediante Django REST Framework. La suite contiene 25 pruebas automatizadas. La colección Postman se ejecutó con Newman contra un servidor real y una base temporal: 35 solicitudes y 45 comprobaciones sin fallos. Las evidencias e instrucciones están en `evidencias/`.
+**¿Qué conocimientos se adquirieron?**
 
-### 5. ¿Qué conocimientos se adquirieron durante el desarrollo?
-
-Los contenidos trabajados son entornos virtuales, modelos y relaciones, migraciones, serializers, métodos HTTP, CRUD, validaciones, filtros, pruebas y Git. La reflexión personal de cada integrante sobre qué comprendió y qué necesita practicar **está pendiente de completar durante el ensayo de defensa**. Esta declaración no afirma dominio individual sin comprobarlo.
-
-## Revisión antes de entregar
-
-Cada integrante debe revisar las estimaciones, completar su reflexión personal y poder explicar y modificar el código. La guía `docs/DEFENSA.md` permite practicar esa comprensión. El historial de commits registra cambios realizados, con asistencia cuando correspondió; no acredita por sí solo dominio técnico individual.
+Durante el desarrollo se trabajaron modelos, relaciones, migraciones, serializers, CRUD, filtros, validaciones y Git. Falta que cada integrante complete su reflexión personal después de practicar la defensa: qué puede explicar por su cuenta, qué cambio puede realizar y qué necesita seguir estudiando.
