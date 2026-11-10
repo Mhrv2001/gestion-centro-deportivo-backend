@@ -1,5 +1,6 @@
 from django.core.validators import MinValueValidator
 from django.db import models
+from django.db.models.functions import Lower
 
 
 class Profesor(models.Model):
@@ -30,6 +31,12 @@ class Actividad(models.Model):
     )
     activa = models.BooleanField(default=True)
 
+    class Meta:
+        constraints = [
+            models.CheckConstraint(condition=models.Q(capacidad__gte=1), name="capacidad_positiva"),
+            models.CheckConstraint(condition=models.Q(precio__gte=0), name="precio_no_negativo"),
+        ]
+
     @property
     def cupos_disponibles(self):
         return max(self.capacidad - self.inscripciones.count(), 0)
@@ -51,8 +58,8 @@ class Inscripcion(models.Model):
     class Meta:
         constraints = [
             models.UniqueConstraint(
-                fields=["actividad", "correo_participante"],
-                name="inscripcion_unica_por_actividad",
+                Lower("correo_participante"), "actividad",
+                name="inscripcion_unica_por_actividad_sin_mayusculas",
             )
         ]
 
