@@ -8,16 +8,16 @@ Esta declaración describe el uso de la herramienta en el proyecto presentado en
 
 | Archivos | Apoyo recibido | Nivel declarado por el estudiante |
 |---|---|---|
-| `models.py` | Propuesta de modelos, relaciones y validaciones | Medio |
+| `models.py` | Propuesta de modelos, relaciones y validaciones | Bajo |
 | `serializers.py` | Código inicial y correcciones de cupos, duplicados y actualizaciones | Medio |
 | `views.py` | CRUD, filtros y transacciones | Medio |
 | `urls.py` y `admin.py` | Rutas y configuración del administrador | Bajo |
 | `settings.py` | Ajustes sobre la configuración que genera Django | Bajo |
 | `tests.py` | Redacción y ejecución de pruebas | Medio |
 | Carga de ejemplos y herramientas de Postman | Código y solicitudes de prueba | Medio |
-| README y documentación | Redacción y revisión | Medio |
+| README y documentación | Redacción y revisión | Bajo |
 
-Los niveles recogen la valoración personal indicada por Matías; no son una medición ni una verificación de la proporción de código generado. La columna de apoyo recibido describe las intervenciones realizadas. Cada integrante debe revisar su propia declaración antes de entregar. Las migraciones las generó Django y la lista de dependencias se obtuvo con pip, siguiendo instrucciones del asistente.
+
 
 ## Preguntas de la pauta
 
