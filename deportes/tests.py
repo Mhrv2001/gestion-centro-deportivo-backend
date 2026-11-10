@@ -1,7 +1,25 @@
 from django.db import IntegrityError, transaction
+from django.core.management import call_command
+from django.test import TestCase
+from io import StringIO
 from rest_framework.test import APITestCase
 
 from .models import Actividad, Inscripcion, Profesor
+
+
+class DatosEjemploTests(TestCase):
+    def test_carga_idempotente_y_conserva_cambios(self):
+        call_command("cargar_ejemplos", stdout=StringIO())
+        self.assertEqual(Profesor.objects.count(), 3)
+        self.assertEqual(Actividad.objects.count(), 3)
+        actividad = Actividad.objects.get(nombre="Yoga")
+        actividad.precio = 7500
+        actividad.save()
+        call_command("cargar_ejemplos", stdout=StringIO())
+        actividad.refresh_from_db()
+        self.assertEqual(actividad.precio, 7500)
+        self.assertEqual(Actividad.objects.count(), 3)
+        self.assertEqual(Inscripcion.objects.count(), 0)
 
 
 class InscripcionesAPITests(APITestCase):
