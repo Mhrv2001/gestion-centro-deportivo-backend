@@ -1,0 +1,691 @@
+{
+  "fecha_utc": "2026-11-10T16:16:46.512876+00:00",
+  "herramienta": "Newman 6.2.1 (ejecutor de colecciones Postman)",
+  "base_datos": "SQLite temporal independiente; eliminada al finalizar",
+  "solicitudes": {
+    "total": 35,
+    "pending": 0,
+    "failed": 0
+  },
+  "aserciones": {
+    "total": 45,
+    "pending": 0,
+    "failed": 0
+  },
+  "fallos": 0,
+  "resultados": [
+    {
+      "nombre": "01 Crear profesor",
+      "metodo": "POST",
+      "estado_http": 201,
+      "respuesta_json": {
+        "id": 1,
+        "nombre": "Profesor Demo1794327402922",
+        "especialidad": "Yoga",
+        "correo": "profe-1794327402922@example.com"
+      },
+      "comprobaciones": [
+        {
+          "nombre": "HTTP 201",
+          "correcta": true
+        },
+        {
+          "nombre": "Correo guardado",
+          "correcta": true
+        }
+      ]
+    },
+    {
+      "nombre": "02 Buscar profesor",
+      "metodo": "GET",
+      "estado_http": 200,
+      "respuesta_json": [
+        {
+          "id": 1,
+          "nombre": "Profesor Demo1794327402922",
+          "especialidad": "Yoga",
+          "correo": "profe-1794327402922@example.com"
+        }
+      ],
+      "comprobaciones": [
+        {
+          "nombre": "HTTP 200",
+          "correcta": true
+        },
+        {
+          "nombre": "Encuentra el profesor creado",
+          "correcta": true
+        }
+      ]
+    },
+    {
+      "nombre": "03 Consultar profesor",
+      "metodo": "GET",
+      "estado_http": 200,
+      "respuesta_json": {
+        "id": 1,
+        "nombre": "Profesor Demo1794327402922",
+        "especialidad": "Yoga",
+        "correo": "profe-1794327402922@example.com"
+      },
+      "comprobaciones": [
+        {
+          "nombre": "HTTP 200",
+          "correcta": true
+        }
+      ]
+    },
+    {
+      "nombre": "04 Reemplazar profesor PUT",
+      "metodo": "PUT",
+      "estado_http": 200,
+      "respuesta_json": {
+        "id": 1,
+        "nombre": "Profesor Demo1794327402922",
+        "especialidad": "Entrenamiento",
+        "correo": "profe-1794327402922@example.com"
+      },
+      "comprobaciones": [
+        {
+          "nombre": "HTTP 200",
+          "correcta": true
+        }
+      ]
+    },
+    {
+      "nombre": "05 Modificar profesor PATCH",
+      "metodo": "PATCH",
+      "estado_http": 200,
+      "respuesta_json": {
+        "id": 1,
+        "nombre": "Profesor Demo1794327402922",
+        "especialidad": "Yoga",
+        "correo": "profe-1794327402922@example.com"
+      },
+      "comprobaciones": [
+        {
+          "nombre": "HTTP 200",
+          "correcta": true
+        }
+      ]
+    },
+    {
+      "nombre": "06 Rechazar correo invalido",
+      "metodo": "POST",
+      "estado_http": 400,
+      "respuesta_json": {
+        "correo": [
+          "Introduzca una dirección de correo electrónico válida."
+        ]
+      },
+      "comprobaciones": [
+        {
+          "nombre": "HTTP 400",
+          "correcta": true
+        }
+      ]
+    },
+    {
+      "nombre": "07 Rechazar correo duplicado",
+      "metodo": "POST",
+      "estado_http": 400,
+      "respuesta_json": {
+        "correo": [
+          "Este correo ya pertenece a un profesor."
+        ]
+      },
+      "comprobaciones": [
+        {
+          "nombre": "HTTP 400",
+          "correcta": true
+        }
+      ]
+    },
+    {
+      "nombre": "08 Crear actividad",
+      "metodo": "POST",
+      "estado_http": 201,
+      "respuesta_json": {
+        "id": 1,
+        "nombre": "Actividad Demo1794327402922",
+        "categoria": "Bienestar",
+        "profesor": 1,
+        "profesor_nombre": "Profesor Demo1794327402922",
+        "horario": "Lunes 10:00",
+        "capacidad": 2,
+        "cupos_disponibles": 2,
+        "precio": "5000.00",
+        "activa": true
+      },
+      "comprobaciones": [
+        {
+          "nombre": "HTTP 201",
+          "correcta": true
+        },
+        {
+          "nombre": "Cupos iniciales",
+          "correcta": true
+        }
+      ]
+    },
+    {
+      "nombre": "09 Filtrar actividades",
+      "metodo": "GET",
+      "estado_http": 200,
+      "respuesta_json": [
+        {
+          "id": 1,
+          "nombre": "Actividad Demo1794327402922",
+          "categoria": "Bienestar",
+          "profesor": 1,
+          "profesor_nombre": "Profesor Demo1794327402922",
+          "horario": "Lunes 10:00",
+          "capacidad": 2,
+          "cupos_disponibles": 2,
+          "precio": "5000.00",
+          "activa": true
+        }
+      ],
+      "comprobaciones": [
+        {
+          "nombre": "HTTP 200",
+          "correcta": true
+        },
+        {
+          "nombre": "Filtro encuentra la actividad",
+          "correcta": true
+        }
+      ]
+    },
+    {
+      "nombre": "10 Consultar actividad",
+      "metodo": "GET",
+      "estado_http": 200,
+      "respuesta_json": {
+        "id": 1,
+        "nombre": "Actividad Demo1794327402922",
+        "categoria": "Bienestar",
+        "profesor": 1,
+        "profesor_nombre": "Profesor Demo1794327402922",
+        "horario": "Lunes 10:00",
+        "capacidad": 2,
+        "cupos_disponibles": 2,
+        "precio": "5000.00",
+        "activa": true
+      },
+      "comprobaciones": [
+        {
+          "nombre": "HTTP 200",
+          "correcta": true
+        }
+      ]
+    },
+    {
+      "nombre": "11 Reemplazar actividad PUT",
+      "metodo": "PUT",
+      "estado_http": 200,
+      "respuesta_json": {
+        "id": 1,
+        "nombre": "Actividad Demo1794327402922",
+        "categoria": "Bienestar",
+        "profesor": 1,
+        "profesor_nombre": "Profesor Demo1794327402922",
+        "horario": "Martes 11:00",
+        "capacidad": 2,
+        "cupos_disponibles": 2,
+        "precio": "5000.00",
+        "activa": true
+      },
+      "comprobaciones": [
+        {
+          "nombre": "HTTP 200",
+          "correcta": true
+        }
+      ]
+    },
+    {
+      "nombre": "12 Modificar precio PATCH",
+      "metodo": "PATCH",
+      "estado_http": 200,
+      "respuesta_json": {
+        "id": 1,
+        "nombre": "Actividad Demo1794327402922",
+        "categoria": "Bienestar",
+        "profesor": 1,
+        "profesor_nombre": "Profesor Demo1794327402922",
+        "horario": "Martes 11:00",
+        "capacidad": 2,
+        "cupos_disponibles": 2,
+        "precio": "5500.00",
+        "activa": true
+      },
+      "comprobaciones": [
+        {
+          "nombre": "HTTP 200",
+          "correcta": true
+        },
+        {
+          "nombre": "Precio actualizado",
+          "correcta": true
+        }
+      ]
+    },
+    {
+      "nombre": "13 Rechazar precio negativo",
+      "metodo": "PATCH",
+      "estado_http": 400,
+      "respuesta_json": {
+        "precio": [
+          "Asegúrese de que este valor es mayor o igual a 0."
+        ]
+      },
+      "comprobaciones": [
+        {
+          "nombre": "HTTP 400",
+          "correcta": true
+        }
+      ]
+    },
+    {
+      "nombre": "14 Rechazar capacidad cero",
+      "metodo": "PATCH",
+      "estado_http": 400,
+      "respuesta_json": {
+        "capacidad": [
+          "Asegúrese de que este valor es mayor o igual a 1."
+        ]
+      },
+      "comprobaciones": [
+        {
+          "nombre": "HTTP 400",
+          "correcta": true
+        }
+      ]
+    },
+    {
+      "nombre": "15 Rechazar filtro invalido",
+      "metodo": "GET",
+      "estado_http": 400,
+      "respuesta_json": {
+        "activa": "Usa true o false."
+      },
+      "comprobaciones": [
+        {
+          "nombre": "HTTP 400",
+          "correcta": true
+        }
+      ]
+    },
+    {
+      "nombre": "16 Proteger profesor con actividades",
+      "metodo": "DELETE",
+      "estado_http": 400,
+      "respuesta_json": {
+        "profesor": "Primero elimina o reasigna las actividades de este profesor."
+      },
+      "comprobaciones": [
+        {
+          "nombre": "HTTP 400",
+          "correcta": true
+        }
+      ]
+    },
+    {
+      "nombre": "17 Inscribir participante",
+      "metodo": "POST",
+      "estado_http": 201,
+      "respuesta_json": {
+        "id": 1,
+        "actividad": 1,
+        "actividad_nombre": "Actividad Demo1794327402922",
+        "nombre_participante": "Ana Demo",
+        "correo_participante": "ana-1794327402922@example.com",
+        "fecha_inscripcion": "2026-11-10T13:16:44.616620-03:00"
+      },
+      "comprobaciones": [
+        {
+          "nombre": "HTTP 201",
+          "correcta": true
+        }
+      ]
+    },
+    {
+      "nombre": "18 Consultar inscripcion",
+      "metodo": "GET",
+      "estado_http": 200,
+      "respuesta_json": {
+        "id": 1,
+        "actividad": 1,
+        "actividad_nombre": "Actividad Demo1794327402922",
+        "nombre_participante": "Ana Demo",
+        "correo_participante": "ana-1794327402922@example.com",
+        "fecha_inscripcion": "2026-11-10T13:16:44.616620-03:00"
+      },
+      "comprobaciones": [
+        {
+          "nombre": "HTTP 200",
+          "correcta": true
+        }
+      ]
+    },
+    {
+      "nombre": "19 Filtrar inscripciones",
+      "metodo": "GET",
+      "estado_http": 200,
+      "respuesta_json": [
+        {
+          "id": 1,
+          "actividad": 1,
+          "actividad_nombre": "Actividad Demo1794327402922",
+          "nombre_participante": "Ana Demo",
+          "correo_participante": "ana-1794327402922@example.com",
+          "fecha_inscripcion": "2026-11-10T13:16:44.616620-03:00"
+        }
+      ],
+      "comprobaciones": [
+        {
+          "nombre": "HTTP 200",
+          "correcta": true
+        },
+        {
+          "nombre": "Inscripcion encontrada",
+          "correcta": true
+        }
+      ]
+    },
+    {
+      "nombre": "20 Rechazar inscripcion duplicada",
+      "metodo": "POST",
+      "estado_http": 400,
+      "respuesta_json": {
+        "correo_participante": [
+          "Este correo ya está inscrito."
+        ]
+      },
+      "comprobaciones": [
+        {
+          "nombre": "HTTP 400",
+          "correcta": true
+        },
+        {
+          "nombre": "Error de correo duplicado",
+          "correcta": true
+        }
+      ]
+    },
+    {
+      "nombre": "21 Ajustar capacidad al total inscrito",
+      "metodo": "PATCH",
+      "estado_http": 200,
+      "respuesta_json": {
+        "id": 1,
+        "nombre": "Actividad Demo1794327402922",
+        "categoria": "Bienestar",
+        "profesor": 1,
+        "profesor_nombre": "Profesor Demo1794327402922",
+        "horario": "Martes 11:00",
+        "capacidad": 1,
+        "cupos_disponibles": 0,
+        "precio": "5500.00",
+        "activa": true
+      },
+      "comprobaciones": [
+        {
+          "nombre": "HTTP 200",
+          "correcta": true
+        }
+      ]
+    },
+    {
+      "nombre": "22 Rechazar actividad llena",
+      "metodo": "POST",
+      "estado_http": 400,
+      "respuesta_json": {
+        "actividad": [
+          "No quedan cupos disponibles."
+        ]
+      },
+      "comprobaciones": [
+        {
+          "nombre": "HTTP 400",
+          "correcta": true
+        },
+        {
+          "nombre": "Error por actividad llena",
+          "correcta": true
+        }
+      ]
+    },
+    {
+      "nombre": "23 Modificar nombre sin reenviar actividad",
+      "metodo": "PATCH",
+      "estado_http": 200,
+      "respuesta_json": {
+        "id": 1,
+        "actividad": 1,
+        "actividad_nombre": "Actividad Demo1794327402922",
+        "nombre_participante": "Ana Actualizada",
+        "correo_participante": "ana-1794327402922@example.com",
+        "fecha_inscripcion": "2026-11-10T13:16:44.616620-03:00"
+      },
+      "comprobaciones": [
+        {
+          "nombre": "HTTP 200",
+          "correcta": true
+        },
+        {
+          "nombre": "Nombre actualizado",
+          "correcta": true
+        }
+      ]
+    },
+    {
+      "nombre": "24 Reemplazar inscripcion PUT",
+      "metodo": "PUT",
+      "estado_http": 200,
+      "respuesta_json": {
+        "id": 1,
+        "actividad": 1,
+        "actividad_nombre": "Actividad Demo1794327402922",
+        "nombre_participante": "Ana Demo",
+        "correo_participante": "ana-1794327402922@example.com",
+        "fecha_inscripcion": "2026-11-10T13:16:44.616620-03:00"
+      },
+      "comprobaciones": [
+        {
+          "nombre": "HTTP 200",
+          "correcta": true
+        }
+      ]
+    },
+    {
+      "nombre": "25 Desactivar actividad",
+      "metodo": "PATCH",
+      "estado_http": 200,
+      "respuesta_json": {
+        "id": 1,
+        "nombre": "Actividad Demo1794327402922",
+        "categoria": "Bienestar",
+        "profesor": 1,
+        "profesor_nombre": "Profesor Demo1794327402922",
+        "horario": "Martes 11:00",
+        "capacidad": 1,
+        "cupos_disponibles": 0,
+        "precio": "5500.00",
+        "activa": false
+      },
+      "comprobaciones": [
+        {
+          "nombre": "HTTP 200",
+          "correcta": true
+        }
+      ]
+    },
+    {
+      "nombre": "26 Rechazar nuevas inscripciones en actividad inactiva",
+      "metodo": "POST",
+      "estado_http": 400,
+      "respuesta_json": {
+        "actividad": [
+          "La actividad no está disponible."
+        ]
+      },
+      "comprobaciones": [
+        {
+          "nombre": "HTTP 400",
+          "correcta": true
+        }
+      ]
+    },
+    {
+      "nombre": "27 Corregir contacto de inscripcion existente en actividad inactiva",
+      "metodo": "PATCH",
+      "estado_http": 200,
+      "respuesta_json": {
+        "id": 1,
+        "actividad": 1,
+        "actividad_nombre": "Actividad Demo1794327402922",
+        "nombre_participante": "Ana Corregida",
+        "correo_participante": "ana-1794327402922@example.com",
+        "fecha_inscripcion": "2026-11-10T13:16:44.616620-03:00"
+      },
+      "comprobaciones": [
+        {
+          "nombre": "HTTP 200",
+          "correcta": true
+        }
+      ]
+    },
+    {
+      "nombre": "28 Cancelar inscripcion",
+      "metodo": "DELETE",
+      "estado_http": 204,
+      "respuesta_json": null,
+      "comprobaciones": [
+        {
+          "nombre": "HTTP 204",
+          "correcta": true
+        }
+      ]
+    },
+    {
+      "nombre": "29 Verificar devolucion de cupo",
+      "metodo": "GET",
+      "estado_http": 200,
+      "respuesta_json": {
+        "id": 1,
+        "nombre": "Actividad Demo1794327402922",
+        "categoria": "Bienestar",
+        "profesor": 1,
+        "profesor_nombre": "Profesor Demo1794327402922",
+        "horario": "Martes 11:00",
+        "capacidad": 1,
+        "cupos_disponibles": 1,
+        "precio": "5500.00",
+        "activa": false
+      },
+      "comprobaciones": [
+        {
+          "nombre": "HTTP 200",
+          "correcta": true
+        },
+        {
+          "nombre": "Cupo recuperado",
+          "correcta": true
+        }
+      ]
+    },
+    {
+      "nombre": "30 Reactivar actividad",
+      "metodo": "PATCH",
+      "estado_http": 200,
+      "respuesta_json": {
+        "id": 1,
+        "nombre": "Actividad Demo1794327402922",
+        "categoria": "Bienestar",
+        "profesor": 1,
+        "profesor_nombre": "Profesor Demo1794327402922",
+        "horario": "Martes 11:00",
+        "capacidad": 1,
+        "cupos_disponibles": 1,
+        "precio": "5500.00",
+        "activa": true
+      },
+      "comprobaciones": [
+        {
+          "nombre": "HTTP 200",
+          "correcta": true
+        }
+      ]
+    },
+    {
+      "nombre": "31 Volver a inscribir tras cancelar",
+      "metodo": "POST",
+      "estado_http": 201,
+      "respuesta_json": {
+        "id": 2,
+        "actividad": 1,
+        "actividad_nombre": "Actividad Demo1794327402922",
+        "nombre_participante": "Ana Demo",
+        "correo_participante": "ana-1794327402922@example.com",
+        "fecha_inscripcion": "2026-11-10T13:16:45.958190-03:00"
+      },
+      "comprobaciones": [
+        {
+          "nombre": "HTTP 201",
+          "correcta": true
+        }
+      ]
+    },
+    {
+      "nombre": "32 Cancelar segunda inscripcion de prueba",
+      "metodo": "DELETE",
+      "estado_http": 204,
+      "respuesta_json": null,
+      "comprobaciones": [
+        {
+          "nombre": "HTTP 204",
+          "correcta": true
+        }
+      ]
+    },
+    {
+      "nombre": "33 Comprobar que fue eliminada",
+      "metodo": "GET",
+      "estado_http": 404,
+      "respuesta_json": {
+        "detail": "No Inscripcion matches the given query."
+      },
+      "comprobaciones": [
+        {
+          "nombre": "HTTP 404",
+          "correcta": true
+        }
+      ]
+    },
+    {
+      "nombre": "34 Eliminar actividad de prueba",
+      "metodo": "DELETE",
+      "estado_http": 204,
+      "respuesta_json": null,
+      "comprobaciones": [
+        {
+          "nombre": "HTTP 204",
+          "correcta": true
+        }
+      ]
+    },
+    {
+      "nombre": "35 Eliminar profesor de prueba",
+      "metodo": "DELETE",
+      "estado_http": 204,
+      "respuesta_json": null,
+      "comprobaciones": [
+        {
+          "nombre": "HTTP 204",
+          "correcta": true
+        }
+      ]
+    }
+  ]
+}

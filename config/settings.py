@@ -78,7 +78,7 @@ WSGI_APPLICATION = 'config.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'NAME': os.environ.get('DJANGO_DB_PATH', BASE_DIR / 'db.sqlite3'),
         # Serializa las escrituras breves antes de validar cupos en una transacción.
         'OPTIONS': {'transaction_mode': 'IMMEDIATE', 'timeout': 10},
     }
