@@ -60,12 +60,52 @@ const actividades = [
   solicitud('16 Proteger profesor con actividades', 'DELETE', 'profesores/{{profesor_id}}/', null, 400),
 ];
 
+const inscripcion = { actividad: '{{actividad_id}}', nombre_participante: 'Ana Demo', correo_participante: 'ana-{{marca}}@example.com' };
+const inscripciones = [
+  solicitud('17 Inscribir participante', 'POST', 'inscripciones/', inscripcion, 201, [
+    "pm.collectionVariables.set('inscripcion_id', pm.response.json().id);",
+  ]),
+  solicitud('18 Consultar inscripcion', 'GET', 'inscripciones/{{inscripcion_id}}/', null, 200),
+  solicitud('19 Filtrar inscripciones', 'GET', 'inscripciones/?actividad={{actividad_id}}&correo=ANA-{{marca}}@example.com', null, 200, [
+    "pm.test('Inscripcion encontrada', () => pm.expect(pm.response.json()).to.have.lengthOf(1));",
+  ]),
+  solicitud('20 Rechazar inscripcion duplicada', 'POST', 'inscripciones/', { ...inscripcion, correo_participante: 'ANA-{{marca}}@example.com' }, 400, [
+    "pm.test('Error de correo duplicado', () => pm.expect(pm.response.json()).to.have.property('correo_participante'));",
+  ]),
+  solicitud('21 Ajustar capacidad al total inscrito', 'PATCH', 'actividades/{{actividad_id}}/', { capacidad: 1 }, 200),
+  solicitud('22 Rechazar actividad llena', 'POST', 'inscripciones/', { ...inscripcion, correo_participante: 'bea-{{marca}}@example.com' }, 400, [
+    "pm.test('Error por actividad llena', () => pm.expect(pm.response.json()).to.have.property('actividad'));",
+  ]),
+  solicitud('23 Modificar nombre sin reenviar actividad', 'PATCH', 'inscripciones/{{inscripcion_id}}/', { nombre_participante: 'Ana Actualizada' }, 200, [
+    "pm.test('Nombre actualizado', () => pm.expect(pm.response.json().nombre_participante).to.eql('Ana Actualizada'));",
+  ]),
+  solicitud('24 Reemplazar inscripcion PUT', 'PUT', 'inscripciones/{{inscripcion_id}}/', inscripcion, 200),
+  solicitud('25 Desactivar actividad', 'PATCH', 'actividades/{{actividad_id}}/', { activa: false }, 200),
+  solicitud('26 Rechazar nuevas inscripciones en actividad inactiva', 'POST', 'inscripciones/', { ...inscripcion, correo_participante: 'bea-{{marca}}@example.com' }, 400),
+  solicitud('27 Corregir contacto de inscripcion existente en actividad inactiva', 'PATCH', 'inscripciones/{{inscripcion_id}}/', { nombre_participante: 'Ana Corregida' }, 200),
+  solicitud('28 Cancelar inscripcion', 'DELETE', 'inscripciones/{{inscripcion_id}}/', null, 204),
+  solicitud('29 Verificar devolucion de cupo', 'GET', 'actividades/{{actividad_id}}/', null, 200, [
+    "pm.test('Cupo recuperado', () => pm.expect(pm.response.json().cupos_disponibles).to.eql(1));",
+  ]),
+  solicitud('30 Reactivar actividad', 'PATCH', 'actividades/{{actividad_id}}/', { activa: true }, 200),
+  solicitud('31 Volver a inscribir tras cancelar', 'POST', 'inscripciones/', inscripcion, 201, [
+    "pm.collectionVariables.set('inscripcion_id', pm.response.json().id);",
+  ]),
+  solicitud('32 Cancelar segunda inscripcion de prueba', 'DELETE', 'inscripciones/{{inscripcion_id}}/', null, 204),
+  solicitud('33 Comprobar que fue eliminada', 'GET', 'inscripciones/{{inscripcion_id}}/', null, 404),
+];
+const limpieza = [
+  solicitud('34 Eliminar actividad de prueba', 'DELETE', 'actividades/{{actividad_id}}/', null, 204),
+  solicitud('35 Eliminar profesor de prueba', 'DELETE', 'profesores/{{profesor_id}}/', null, 204),
+];
+
 const coleccion = {
   info: { name: 'Centro deportivo - API REST', schema: 'https://schema.getpostman.com/json/collection/v2.1.0/collection.json',
     description: 'Ejecutar en orden con Collection Runner o Newman. Usa solamente datos ficticios propios de la prueba.' },
   variable: [{ key: 'base_url', value: 'http://127.0.0.1:8000' }, { key: 'marca', value: '' },
-    { key: 'profesor_id', value: '' }, { key: 'actividad_id', value: '' }],
-  item: [{ name: '01 Profesores', item: profesores }, { name: '02 Actividades', item: actividades }],
+    { key: 'profesor_id', value: '' }, { key: 'actividad_id', value: '' }, { key: 'inscripcion_id', value: '' }],
+  item: [{ name: '01 Profesores', item: profesores }, { name: '02 Actividades', item: actividades },
+    { name: '03 Inscripciones y reglas de negocio', item: inscripciones }, { name: '04 Limpieza de datos propios de prueba', item: limpieza }],
 };
 
 const destino = path.join(__dirname, '..', 'postman', 'centro_deportivo.postman_collection.json');

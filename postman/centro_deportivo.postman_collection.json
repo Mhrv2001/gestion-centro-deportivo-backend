@@ -20,6 +20,10 @@
     {
       "key": "actividad_id",
       "value": ""
+    },
+    {
+      "key": "inscripcion_id",
+      "value": ""
     }
   ],
   "item": [
@@ -517,6 +521,576 @@
                 "exec": [
                   "pm.test('HTTP 400', () => pm.response.to.have.status(400));",
                   "if (pm.response.code === 400) {",
+                  "}"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "03 Inscripciones y reglas de negocio",
+      "item": [
+        {
+          "name": "17 Inscribir participante",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/inscripciones/",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"actividad\": \"{{actividad_id}}\",\n  \"nombre_participante\": \"Ana Demo\",\n  \"correo_participante\": \"ana-{{marca}}@example.com\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 201', () => pm.response.to.have.status(201));",
+                  "if (pm.response.code === 201) {",
+                  "pm.collectionVariables.set('inscripcion_id', pm.response.json().id);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "18 Consultar inscripcion",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/api/inscripciones/{{inscripcion_id}}/"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+                  "if (pm.response.code === 200) {",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "19 Filtrar inscripciones",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/api/inscripciones/?actividad={{actividad_id}}&correo=ANA-{{marca}}@example.com"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+                  "if (pm.response.code === 200) {",
+                  "pm.test('Inscripcion encontrada', () => pm.expect(pm.response.json()).to.have.lengthOf(1));",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "20 Rechazar inscripcion duplicada",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/inscripciones/",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"actividad\": \"{{actividad_id}}\",\n  \"nombre_participante\": \"Ana Demo\",\n  \"correo_participante\": \"ANA-{{marca}}@example.com\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 400', () => pm.response.to.have.status(400));",
+                  "if (pm.response.code === 400) {",
+                  "pm.test('Error de correo duplicado', () => pm.expect(pm.response.json()).to.have.property('correo_participante'));",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "21 Ajustar capacidad al total inscrito",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/actividades/{{actividad_id}}/",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"capacidad\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+                  "if (pm.response.code === 200) {",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "22 Rechazar actividad llena",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/inscripciones/",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"actividad\": \"{{actividad_id}}\",\n  \"nombre_participante\": \"Ana Demo\",\n  \"correo_participante\": \"bea-{{marca}}@example.com\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 400', () => pm.response.to.have.status(400));",
+                  "if (pm.response.code === 400) {",
+                  "pm.test('Error por actividad llena', () => pm.expect(pm.response.json()).to.have.property('actividad'));",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "23 Modificar nombre sin reenviar actividad",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/inscripciones/{{inscripcion_id}}/",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre_participante\": \"Ana Actualizada\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+                  "if (pm.response.code === 200) {",
+                  "pm.test('Nombre actualizado', () => pm.expect(pm.response.json().nombre_participante).to.eql('Ana Actualizada'));",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "24 Reemplazar inscripcion PUT",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/inscripciones/{{inscripcion_id}}/",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"actividad\": \"{{actividad_id}}\",\n  \"nombre_participante\": \"Ana Demo\",\n  \"correo_participante\": \"ana-{{marca}}@example.com\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+                  "if (pm.response.code === 200) {",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "25 Desactivar actividad",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/actividades/{{actividad_id}}/",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"activa\": false\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+                  "if (pm.response.code === 200) {",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "26 Rechazar nuevas inscripciones en actividad inactiva",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/inscripciones/",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"actividad\": \"{{actividad_id}}\",\n  \"nombre_participante\": \"Ana Demo\",\n  \"correo_participante\": \"bea-{{marca}}@example.com\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 400', () => pm.response.to.have.status(400));",
+                  "if (pm.response.code === 400) {",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "27 Corregir contacto de inscripcion existente en actividad inactiva",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/inscripciones/{{inscripcion_id}}/",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre_participante\": \"Ana Corregida\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+                  "if (pm.response.code === 200) {",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "28 Cancelar inscripcion",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{base_url}}/api/inscripciones/{{inscripcion_id}}/"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 204', () => pm.response.to.have.status(204));",
+                  "if (pm.response.code === 204) {",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "29 Verificar devolucion de cupo",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/api/actividades/{{actividad_id}}/"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+                  "if (pm.response.code === 200) {",
+                  "pm.test('Cupo recuperado', () => pm.expect(pm.response.json().cupos_disponibles).to.eql(1));",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "30 Reactivar actividad",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/actividades/{{actividad_id}}/",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"activa\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+                  "if (pm.response.code === 200) {",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "31 Volver a inscribir tras cancelar",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/inscripciones/",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"actividad\": \"{{actividad_id}}\",\n  \"nombre_participante\": \"Ana Demo\",\n  \"correo_participante\": \"ana-{{marca}}@example.com\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 201', () => pm.response.to.have.status(201));",
+                  "if (pm.response.code === 201) {",
+                  "pm.collectionVariables.set('inscripcion_id', pm.response.json().id);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "32 Cancelar segunda inscripcion de prueba",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{base_url}}/api/inscripciones/{{inscripcion_id}}/"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 204', () => pm.response.to.have.status(204));",
+                  "if (pm.response.code === 204) {",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "33 Comprobar que fue eliminada",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/api/inscripciones/{{inscripcion_id}}/"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 404', () => pm.response.to.have.status(404));",
+                  "if (pm.response.code === 404) {",
+                  "}"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "04 Limpieza de datos propios de prueba",
+      "item": [
+        {
+          "name": "34 Eliminar actividad de prueba",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{base_url}}/api/actividades/{{actividad_id}}/"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 204', () => pm.response.to.have.status(204));",
+                  "if (pm.response.code === 204) {",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "35 Eliminar profesor de prueba",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{base_url}}/api/profesores/{{profesor_id}}/"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 204', () => pm.response.to.have.status(204));",
+                  "if (pm.response.code === 204) {",
                   "}"
                 ]
               }
