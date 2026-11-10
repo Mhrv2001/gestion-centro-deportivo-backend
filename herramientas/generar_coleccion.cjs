@@ -39,11 +39,33 @@ const profesores = [
   solicitud('07 Rechazar correo duplicado', 'POST', 'profesores/', { ...profesor, correo: 'PROFE-{{marca}}@example.com' }, 400),
 ];
 
+const actividad = { nombre: 'Actividad Demo{{marca}}', categoria: 'Bienestar', profesor: '{{profesor_id}}',
+  horario: 'Lunes 10:00', capacidad: 2, precio: '5000.00', activa: true };
+const actividades = [
+  solicitud('08 Crear actividad', 'POST', 'actividades/', actividad, 201, [
+    "pm.collectionVariables.set('actividad_id', pm.response.json().id);",
+    "pm.test('Cupos iniciales', () => pm.expect(pm.response.json().cupos_disponibles).to.eql(2));",
+  ]),
+  solicitud('09 Filtrar actividades', 'GET', 'actividades/?categoria=Bienestar&profesor={{profesor_id}}&activa=true', null, 200, [
+    "pm.test('Filtro encuentra la actividad', () => pm.expect(pm.response.json().some(a => a.id === Number(pm.collectionVariables.get('actividad_id')))).to.eql(true));",
+  ]),
+  solicitud('10 Consultar actividad', 'GET', 'actividades/{{actividad_id}}/', null, 200),
+  solicitud('11 Reemplazar actividad PUT', 'PUT', 'actividades/{{actividad_id}}/', { ...actividad, horario: 'Martes 11:00' }, 200),
+  solicitud('12 Modificar precio PATCH', 'PATCH', 'actividades/{{actividad_id}}/', { precio: '5500.00' }, 200, [
+    "pm.test('Precio actualizado', () => pm.expect(pm.response.json().precio).to.eql('5500.00'));",
+  ]),
+  solicitud('13 Rechazar precio negativo', 'PATCH', 'actividades/{{actividad_id}}/', { precio: '-1' }, 400),
+  solicitud('14 Rechazar capacidad cero', 'PATCH', 'actividades/{{actividad_id}}/', { capacidad: 0 }, 400),
+  solicitud('15 Rechazar filtro invalido', 'GET', 'actividades/?activa=quizas', null, 400),
+  solicitud('16 Proteger profesor con actividades', 'DELETE', 'profesores/{{profesor_id}}/', null, 400),
+];
+
 const coleccion = {
   info: { name: 'Centro deportivo - API REST', schema: 'https://schema.getpostman.com/json/collection/v2.1.0/collection.json',
     description: 'Ejecutar en orden con Collection Runner o Newman. Usa solamente datos ficticios propios de la prueba.' },
-  variable: [{ key: 'base_url', value: 'http://127.0.0.1:8000' }, { key: 'marca', value: '' }, { key: 'profesor_id', value: '' }],
-  item: [{ name: '01 Profesores', item: profesores }],
+  variable: [{ key: 'base_url', value: 'http://127.0.0.1:8000' }, { key: 'marca', value: '' },
+    { key: 'profesor_id', value: '' }, { key: 'actividad_id', value: '' }],
+  item: [{ name: '01 Profesores', item: profesores }, { name: '02 Actividades', item: actividades }],
 };
 
 const destino = path.join(__dirname, '..', 'postman', 'centro_deportivo.postman_collection.json');

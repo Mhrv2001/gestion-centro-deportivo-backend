@@ -16,6 +16,10 @@
     {
       "key": "profesor_id",
       "value": ""
+    },
+    {
+      "key": "actividad_id",
+      "value": ""
     }
   ],
   "item": [
@@ -236,6 +240,274 @@
                 }
               }
             }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 400', () => pm.response.to.have.status(400));",
+                  "if (pm.response.code === 400) {",
+                  "}"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "02 Actividades",
+      "item": [
+        {
+          "name": "08 Crear actividad",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/actividades/",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Actividad Demo{{marca}}\",\n  \"categoria\": \"Bienestar\",\n  \"profesor\": \"{{profesor_id}}\",\n  \"horario\": \"Lunes 10:00\",\n  \"capacidad\": 2,\n  \"precio\": \"5000.00\",\n  \"activa\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 201', () => pm.response.to.have.status(201));",
+                  "if (pm.response.code === 201) {",
+                  "pm.collectionVariables.set('actividad_id', pm.response.json().id);",
+                  "pm.test('Cupos iniciales', () => pm.expect(pm.response.json().cupos_disponibles).to.eql(2));",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "09 Filtrar actividades",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/api/actividades/?categoria=Bienestar&profesor={{profesor_id}}&activa=true"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+                  "if (pm.response.code === 200) {",
+                  "pm.test('Filtro encuentra la actividad', () => pm.expect(pm.response.json().some(a => a.id === Number(pm.collectionVariables.get('actividad_id')))).to.eql(true));",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "10 Consultar actividad",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/api/actividades/{{actividad_id}}/"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+                  "if (pm.response.code === 200) {",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "11 Reemplazar actividad PUT",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/actividades/{{actividad_id}}/",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Actividad Demo{{marca}}\",\n  \"categoria\": \"Bienestar\",\n  \"profesor\": \"{{profesor_id}}\",\n  \"horario\": \"Martes 11:00\",\n  \"capacidad\": 2,\n  \"precio\": \"5000.00\",\n  \"activa\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+                  "if (pm.response.code === 200) {",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "12 Modificar precio PATCH",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/actividades/{{actividad_id}}/",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"precio\": \"5500.00\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', () => pm.response.to.have.status(200));",
+                  "if (pm.response.code === 200) {",
+                  "pm.test('Precio actualizado', () => pm.expect(pm.response.json().precio).to.eql('5500.00'));",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "13 Rechazar precio negativo",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/actividades/{{actividad_id}}/",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"precio\": \"-1\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 400', () => pm.response.to.have.status(400));",
+                  "if (pm.response.code === 400) {",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "14 Rechazar capacidad cero",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{base_url}}/api/actividades/{{actividad_id}}/",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"capacidad\": 0\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 400', () => pm.response.to.have.status(400));",
+                  "if (pm.response.code === 400) {",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "15 Rechazar filtro invalido",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{base_url}}/api/actividades/?activa=quizas"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 400', () => pm.response.to.have.status(400));",
+                  "if (pm.response.code === 400) {",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "16 Proteger profesor con actividades",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{base_url}}/api/profesores/{{profesor_id}}/"
           },
           "event": [
             {
