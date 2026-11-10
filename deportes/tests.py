@@ -49,6 +49,38 @@ class ProfesoresAPITests(APITestCase):
         self.assertEqual(self.client.get("/api/profesores/?search=Boxeo").data, [])
 
 
+class ActividadesAPITests(APITestCase):
+    def setUp(self):
+        self.profesor = Profesor.objects.create(nombre="Laura", especialidad="Yoga", correo="laura@example.com")
+        self.datos = {"nombre": "Yoga", "categoria": "Bienestar", "profesor": self.profesor.pk,
+                      "horario": "Lunes 10:00", "capacidad": 3, "precio": "5000.00", "activa": True}
+
+    def test_crud_y_campos_calculados(self):
+        respuesta = self.client.post("/api/actividades/", self.datos, format="json")
+        self.assertEqual(respuesta.status_code, 201)
+        url = f"/api/actividades/{respuesta.data['id']}/"
+        self.assertEqual(respuesta.data["profesor_nombre"], "Laura")
+        self.assertEqual(respuesta.data["cupos_disponibles"], 3)
+        self.datos["horario"] = "Viernes 11:00"
+        self.assertEqual(self.client.put(url, self.datos, format="json").status_code, 200)
+        respuesta = self.client.patch(url, {"precio": "0.00", "cupos_disponibles": 100}, format="json")
+        self.assertEqual(respuesta.status_code, 200)
+        self.assertEqual(respuesta.data["precio"], "0.00")
+        self.assertEqual(respuesta.data["cupos_disponibles"], 3)
+        self.assertEqual(self.client.delete(url).status_code, 204)
+        self.assertEqual(self.client.get(url).status_code, 404)
+
+    def test_campos_obligatorios(self):
+        self.assertEqual(self.client.post("/api/actividades/", {}, format="json").status_code, 400)
+        self.assertFalse(Actividad.objects.exists())
+
+    def test_filtros_combinados(self):
+        self.client.post("/api/actividades/", self.datos, format="json")
+        respuesta = self.client.get(f"/api/actividades/?categoria=Bienestar&activa=true&profesor={self.profesor.pk}")
+        self.assertEqual(len(respuesta.data), 1)
+        self.assertEqual(self.client.get("/api/actividades/?categoria=Equipo&activa=true").data, [])
+
+
 class InscripcionesAPITests(APITestCase):
     def setUp(self):
         self.profesor = Profesor.objects.create(
