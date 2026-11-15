@@ -39,4 +39,6 @@ Con `manage.py check`, las migraciones, 25 pruebas de Django y una colección Po
 
 **¿Qué conocimientos se adquirieron?**
 
-Durante el desarrollo se trabajaron modelos, relaciones, migraciones, serializers, CRUD, filtros, validaciones y Git. Falta que cada integrante complete su reflexión personal después de practicar la defensa: qué puede explicar por su cuenta, qué cambio puede realizar y qué necesita seguir estudiando.
+**Reflexión de Matías:** Aprendí cómo se relacionan los modelos, para qué sirven las migraciones y cómo probar un CRUD desde la API. Puedo explicar el control de cupos y las validaciones. Todavía necesito practicar más los cambios de código en vivo.
+
+**Reflexión de Henry:** Mi participación en esta etapa fue menor por motivos personales. Necesito revisar los modelos, las rutas y las pruebas para entender bien el funcionamiento de la API y prepararme para explicar mi parte en la defensa.
