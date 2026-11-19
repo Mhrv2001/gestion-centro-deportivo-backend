@@ -75,4 +75,4 @@ Después abrir http://127.0.0.1:8000/admin/. Las rutas de la API no requieren es
 
 Estos archivos están dentro de `deportes`. La configuración general está en `config`.
 
-El proyecto está preparado para uso local. No se conectó a React ni se desplegó en producción. La declaración de herramientas utilizadas está en [USO_IA.md](USO_IA.md) y el material para practicar la presentación está en [docs/DEFENSA.md](docs/DEFENSA.md).
+El proyecto está preparado para uso local. No se conectó a React ni se desplegó en producción. La declaración de herramientas utilizadas está en [USO_IA.md](USO_IA.md).
